@@ -17,6 +17,7 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
   private TextView mNameTextView, mQuantityTextView, mDateTextView;
   private Item mCurrentItem;
   private Item mClearedItem;
+  private ArrayList<Item> mItems = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     mQuantityTextView = findViewById(R.id.quantity_text);
     mDateTextView = findViewById(R.id.date_text);
 
+    mItems.add(new Item("Example 1", 30, new GregorianCalendar()));
+    mItems.add(new Item("Example 2", 40, new GregorianCalendar()));
+    mItems.add(new Item("Example 3", 50, new GregorianCalendar()));
 
     // Boilerplate code.  Don't mess with it.
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         int quantity = Integer.parseInt(quantityEditText.getText().toString());
         mCurrentItem = new Item(name, quantity, calendar);
         showCurrentItem();
+        mItems.add(mCurrentItem);
       }
     });
     builder.setNegativeButton(android.R.string.cancel, null);
@@ -116,12 +122,38 @@ public class MainActivity extends AppCompatActivity {
         });
         snackbar.show();
         return true;
+      case R.id.action_search:
+        showSearchDialog();
+        return true;
       case R.id.action_settings:
         //startActivity(new Intent(Settings.ACTION_SETTINGS));
         startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
         return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  private void showSearchDialog() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+    builder.setTitle(R.string.choose_an_item);
+    builder.setItems(getNames(), new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        mCurrentItem = mItems.get(which);
+        showCurrentItem();
+      }
+    });
+    builder.setNegativeButton(android.R.string.cancel, null);
+    builder.create().show();
+  }
+
+  private String[] getNames() {
+    String[] names = new String[mItems.size()];
+    for (int i = 0; i < mItems.size(); i++) {
+      names[i] = mItems.get(i).getName();
+    }
+    return names;
   }
 }
 
