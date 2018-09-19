@@ -1,5 +1,7 @@
 package ie.ul.davidfisher.pointofsale;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -36,14 +38,32 @@ public class MainActivity extends AppCompatActivity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-
-        // TODO: Later make this actually be an add button.
-        // This is just a test...
-        // For now just practice showing an item on the screen.
-        mCurrentItem = Item.getDefaultItem();
-        showCurrentItem();
+        addItem();
       }
     });
+  }
+
+  private void addItem() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+    // Simpler dialog
+//    builder.setTitle("My title");
+//    builder.setMessage("Hello");
+//    builder.setPositiveButton("OK", null);
+
+//    builder.setTitle(R.string.add_item);
+    View view = getLayoutInflater().inflate(R.layout.dialog_add, null, false);
+    builder.setView(view);
+
+    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+
+      }
+    });
+    builder.setNegativeButton(android.R.string.cancel, null);
+
+    builder.create().show();
   }
 
   private void showCurrentItem() {
