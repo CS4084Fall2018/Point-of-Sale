@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     });
   }
 
-  private void insertItem(boolean isEdit) {
+  private void insertItem(final boolean isEdit) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     View view = getLayoutInflater().inflate(R.layout.dialog_add, null, false);
     builder.setView(view);
@@ -65,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
     final EditText quantityEditText = view.findViewById(R.id.edit_quantity);
     final CalendarView deliveryDateView = view.findViewById(R.id.calendar_view);
     final GregorianCalendar calendar = new GregorianCalendar();
-
-    // TODO: Populate the dialog with the values if this is an edit.
-
+    if (isEdit) {
+      nameEditText.setText(mCurrentItem.getName());
+      quantityEditText.setText("" + mCurrentItem.getQuantity());
+      deliveryDateView.setDate(mCurrentItem.getDeliveryDateTime());
+    }
     deliveryDateView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
       @Override
       public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
@@ -77,13 +79,17 @@ public class MainActivity extends AppCompatActivity {
     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
-
-        // TODO: Edit the mCurrentItem instead of making a new one if this is an edit
         String name = nameEditText.getText().toString();
         int quantity = Integer.parseInt(quantityEditText.getText().toString());
-        mCurrentItem = new Item(name, quantity, calendar);
+        if (isEdit) {
+          mCurrentItem.setName(name);
+          mCurrentItem.setQuantity(quantity);
+          mCurrentItem.setDeliveryDate(calendar);
+        } else {
+          mCurrentItem = new Item(name, quantity, calendar);
+          mItems.add(mCurrentItem);
+        }
         showCurrentItem();
-        mItems.add(mCurrentItem);
       }
     });
     builder.setNegativeButton(android.R.string.cancel, null);
