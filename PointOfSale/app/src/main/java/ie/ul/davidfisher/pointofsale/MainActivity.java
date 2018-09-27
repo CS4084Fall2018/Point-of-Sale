@@ -52,26 +52,22 @@ public class MainActivity extends AppCompatActivity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        addItem();
+        insertItem(false);
       }
     });
   }
 
-  private void addItem() {
+  private void insertItem(boolean isEdit) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-    // Simpler dialog
-//    builder.setTitle("My title");
-//    builder.setMessage("Hello");
-//    builder.setPositiveButton("OK", null);
-
-//    builder.setTitle(R.string.add_item);
     View view = getLayoutInflater().inflate(R.layout.dialog_add, null, false);
     builder.setView(view);
     final EditText nameEditText = view.findViewById(R.id.edit_name);
     final EditText quantityEditText = view.findViewById(R.id.edit_quantity);
     final CalendarView deliveryDateView = view.findViewById(R.id.calendar_view);
     final GregorianCalendar calendar = new GregorianCalendar();
+
+    // TODO: Populate the dialog with the values if this is an edit.
+
     deliveryDateView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
       @Override
       public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
@@ -81,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
     builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
+
+        // TODO: Edit the mCurrentItem instead of making a new one if this is an edit
         String name = nameEditText.getText().toString();
         int quantity = Integer.parseInt(quantityEditText.getText().toString());
         mCurrentItem = new Item(name, quantity, calendar);
@@ -116,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
   public boolean onContextItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_edit:
-        Toast.makeText(this, "TODO Edit", Toast.LENGTH_SHORT).show();
+        insertItem(true);
         return true;
       case R.id.action_remove:
         mItems.remove(mCurrentItem);
